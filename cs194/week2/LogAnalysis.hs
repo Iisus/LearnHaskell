@@ -44,3 +44,4 @@ parse xs = map parseMessage (lines xs)
 --   at that the left subtree, but less than the right child node. Ordering is done
 --   by timestamp
 insert :: LogMessage -> MessageTree -> MessageTree
+insert _ _ = Leaf
