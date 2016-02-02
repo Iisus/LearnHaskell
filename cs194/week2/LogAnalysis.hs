@@ -28,7 +28,7 @@ parseMessage' ("W":y:xs)
   | otherwise = Unknown (unwords (y:xs))
 parseMessage' ("E":y:z:xs)
   | isUInt y && isUInt z = LogMessage (Error (read y))(read z) (unwords xs)
-  | otherwise = Unknown (unwords (y:xs))
+  | otherwise            = Unknown (unwords (y:xs))
 parseMessage' xs = Unknown (unwords xs)
 
 -- | @parseMessage s@ parse the string @s@ and returns a LogMessage
@@ -39,9 +39,24 @@ parseMessage s = parseMessage' (words s)
 parse :: String -> [LogMessage]
 parse xs = map parseMessage (lines xs)
 
--- | @insert m t@ insert LogMessage @m@ in the ordered MessageTree @t@, producing
+
+-- | @insert n t@ insert node LogMessage @n@ in the ordered MessageTree @t@, producing
 --   a new ordered MessageTree. The ordering rules are: a node should be greater
 --   at that the left subtree, but less than the right child node. Ordering is done
 --   by timestamp
 insert :: LogMessage -> MessageTree -> MessageTree
-insert _ _ = Leaf
+insert n@(LogMessage _ _ _) Leaf = Node Leaf n Leaf
+insert n@(LogMessage _ insTs _) (Node lt (LogMessage _ currTs _) rt)
+  | insTs > currTs = insert n rt
+  | otherwise      = insert n lt
+insert _ t = t
+
+-- | @build xs t@ helper function for @build@
+build' :: [LogMessage] -> MessageTree -> MessageTree
+build' [] t = t
+build' (x:[]) t = insert x t
+build' (x:xs) t = build' xs (insert x t)
+
+-- | @build xs@ builds a MessageTree from the list of LogMessages @xs@
+build :: [LogMessage] -> MessageTree
+build xs = build' xs Leaf
