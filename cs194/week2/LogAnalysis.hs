@@ -38,3 +38,9 @@ parseMessage s = parseMessage' (words s)
 -- | @parse s@ parse the text @s@ and returns a list of LogMessages
 parse :: String -> [LogMessage]
 parse xs = map parseMessage (lines xs)
+
+-- | @insert m t@ insert LogMessage @m@ in the ordered MessageTree @t@, producing
+--   a new ordered MessageTree. The ordering rules are: a node should be greater
+--   at that the left subtree, but less than the right child node. Ordering is done
+--   by timestamp
+insert :: LogMessage -> MessageTree -> MessageTree
