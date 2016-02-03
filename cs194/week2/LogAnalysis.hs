@@ -60,3 +60,26 @@ build' (x:xs) t = build' xs (insert x t)
 -- | @build xs@ builds a MessageTree from the list of LogMessages @xs@
 build :: [LogMessage] -> MessageTree
 build xs = build' xs Leaf
+
+-- | @inOrder t@ takes the MessageTree @t@ and returns an ordered list of LogMessages
+inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf = []
+inOrder (Node lt n rt) = inOrder lt ++ [n] ++ inOrder rt
+
+-- | @sort xs@ sorts and remove Unknown messages from the list of LogMessages @xs@
+sort :: [LogMessage] -> [LogMessage]
+sort xs = inOrder . build $ xs
+
+-- | @whatWentWrong' xs@ takes a list of LogMessages @xs@ and returns
+--   the messages of the errors with a severity of 50 or greater (helper for whatWentWrong)
+whatWentWrong' :: [LogMessage] -> [String]
+whatWentWrong' [] = []
+whatWentWrong' ((LogMessage (Error sev) _ msg):xs)
+  | sev >= 50  = msg : whatWentWrong' xs
+  | otherwise = whatWentWrong' xs
+whatWentWrong' (_:xs) = whatWentWrong' xs
+
+-- | @whatWentWrong xs@ takes an unsorted list of LogMessages @xs@ and returns
+--   the messages of the errors with a severity of 50 or greater
+whatWentWrong :: [LogMessage] -> [String]
+whatWentWrong xs = whatWentWrong' . sort $ xs
