@@ -46,9 +46,9 @@ parse xs = map parseMessage (lines xs)
 --   by timestamp
 insert :: LogMessage -> MessageTree -> MessageTree
 insert n@(LogMessage _ _ _) Leaf = Node Leaf n Leaf
-insert n@(LogMessage _ insTs _) (Node lt (LogMessage _ currTs _) rt)
-  | insTs > currTs = insert n rt
-  | otherwise      = insert n lt
+insert n@(LogMessage _ insTs _) (Node lt cn@(LogMessage _ currTs _) rt)
+  | insTs > currTs = Node lt cn (insert n rt)
+  | otherwise      = Node (insert n lt) cn rt
 insert _ t = t
 
 -- | @build xs t@ helper function for @build@
