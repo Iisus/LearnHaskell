@@ -10,6 +10,8 @@
 
 module Golf where
 
+import Data.List
+
 -- | @skips xs@ takes the list @xs@ and outputs a list of lists, by this rule:
 -- | the first list in the output is the same as the input; the second list
 -- | in the output contains every second element from the input, the nth list
@@ -51,3 +53,39 @@ localMaxima :: [Integer] -> [Integer]
 localMaxima xs = map (\ (_, b, _) -> b)
                      (filter (\(a, b, c) -> a<b && b>c)
                             (zip3 xs (drop 1 xs) (drop 2 xs)))
+
+-- | @countEach xs@ get the list of digits @xs@ (0-9) and returns a list with 10
+-- | elements, each element being the number of apearances the current index have
+-- | in the original list.
+-- | Example [1, 1, 2, 1, 3, 2, 9, 9] -> [0, 3, 2, 1, 0, 0, 0, 0, 0, 2]
+-- |
+-- | Implementation details: for each element in the range 0..9, we filter out
+-- | all the elements in the input list that are different, leaving only the
+-- | ones that are the same, then insert at that position (map) the length of
+-- | the filtered list.
+countEach :: [Int] -> [Int]
+countEach xs = map (\x -> length . filter (==x) $ xs) [0..9]
+
+-- | @nrToStars xs@ gets the list of number of digits @xs@ and outputs a list of
+-- | Strings.
+-- | Example: [0, 3, 0, 1] -> ["   ", "***", "   ", "*"]
+-- |
+-- | Implementation details: For each number n it inserts n '*' and max - n ' ',
+-- | where max is the maximum n in the list.
+nrToStars :: [Int] -> [String]
+nrToStars xs = map (\x -> '=' : replicate x '*' ++ replicate (maximum xs - x) ' ') xs
+
+-- | @histogram xs@ gets the list of digits @xs@ (0-9) and retuns a histogram
+-- | Example: [1, 3, 1, 5, 0, 5, 2, 1, 8]
+-- |  *
+-- |  *   *
+-- | **** *  * 
+-- | ==========
+-- | 0123456789
+-- |
+-- | Implementation details: count how many times a digit appears and put that into a list.
+-- | Transform that list into a list of strings where each string contains n stars, where
+-- | n is the number that index appeared in the input list. Transpose, reverse that
+-- | list and intercalate \n between lines for displaying.
+histogram :: [Int] -> String
+histogram xs = intercalate "\n" (reverse . transpose . nrToStars . countEach $ xs) ++ "\n0123456789\n"
