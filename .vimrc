@@ -1,7 +1,3 @@
-scriptencoding utf-8
-set encoding=utf-8
-set fileencoding=utf-8
-
 "Highlight the columns from 80 to 999
 execute "set colorcolumn=" . join(range(80,999),",")
 highlight ColorColumn ctermbg=235 guibg=#2c2d27
