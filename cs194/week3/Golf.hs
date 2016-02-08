@@ -73,7 +73,7 @@ countEach xs = map (\x -> length . filter (==x) $ xs) [0..9]
 -- | Implementation details: For each number n it inserts n '*' and max - n ' ',
 -- | where max is the maximum n in the list.
 nrToStars :: [Int] -> [String]
-nrToStars xs = map (\x -> '=' : replicate x '*' ++ replicate (maximum xs - x) ' ') xs
+nrToStars xs = map (\x -> replicate x '*' ++ replicate (maximum xs - x) ' ') xs
 
 -- | @histogram xs@ gets the list of digits @xs@ (0-9) and retuns a histogram
 -- | Example: [1, 3, 1, 5, 0, 5, 2, 1, 8]
@@ -88,4 +88,5 @@ nrToStars xs = map (\x -> '=' : replicate x '*' ++ replicate (maximum xs - x) ' 
 -- | n is the number that index appeared in the input list. Transpose, reverse that
 -- | list and intercalate \n between lines for displaying.
 histogram :: [Int] -> String
-histogram xs = intercalate "\n" (reverse . transpose . nrToStars . countEach $ xs) ++ "\n0123456789\n"
+histogram xs = (unlines . reverse . transpose . nrToStars . countEach $ xs)
+                ++ "==========\n0123456789\n"
