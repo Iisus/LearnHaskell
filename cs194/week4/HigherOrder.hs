@@ -38,9 +38,22 @@ fun2 = sum . filter even . takeWhile (/=1)
 -- Exercise 2 [Folding with trees] --
 data Tree a = Leaf
             | Node Integer (Tree a) a (Tree a)
+  deriving (Show, Eq)
+
+treeH :: Tree a -> Integer
+treeH Leaf = 0
+treeH (Node h _ _ _) = h
+
+insertInTree :: a -> Tree a -> Tree a
+insertInTree x Leaf = Node 0 Leaf x Leaf
+insertInTree x (Node _ t1 x' t2)
+  | h1 < h2   = Node (h2 + 1) (insertInTree x t1) x' t2
+  | otherwise = Node (h1 + 1) t1 x' (insertInTree x t2)
+  where h1 = treeH t1
+        h2 = treeH t2
 
 foldTree :: [a] -> Tree a
-foldTree xs = Leaf --TODO
+foldTree = foldr insertInTree Leaf
 
 
 -- Exercise 3 [More folds] --
@@ -61,11 +74,12 @@ myFoldl f = foldr (flip f)
 cartProd :: [a] -> [b] -> [(a, b)]
 cartProd xs ys = [(x, y) | x <- xs, y <- ys]
 
-sieveSundarm, sieveSundarm' :: Integer -> [Integer]
+sieveSundarm :: Integer -> [Integer]
 sieveSundarm n = map ((+1) . (*2)) $ [1..n] \\
                [i+j + 2*i*j | (i, j) <- cartProd [1..n] [1..n],
                                        i<=j, (i+j + 2*i*j)<=n]
 
+sieveSundarm' :: Integer -> [Integer]
 sieveSundarm' n = map ((+1) . (*2)) $ [1..n] \\ (filter (<=n) .
                map (\(i, j) -> i+j + 2*i*j) . filter (uncurry (<=))
                $ cartProd [1..n] [1..n])
