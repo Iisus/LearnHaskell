@@ -67,7 +67,7 @@ map' f = foldr (\x xs -> f x : xs) []
 
 -- 3. Implement foldl using foldr
 myFoldl :: (a -> b -> a) -> a -> [b] -> a
-myFoldl f = foldr (flip f)
+myFoldl f base = foldr (flip f) base . reverse
 
 
 -- Exercise 4 [Finding primes] --
