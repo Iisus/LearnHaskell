@@ -54,7 +54,7 @@ map' f = foldr (\x xs -> f x : xs) []
 
 -- 3. Implement foldl using foldr
 myFoldl :: (a -> b -> a) -> a -> [b] -> a
-myFoldl f base = foldr (\x acc -> f acc x) base
+myFoldl f = foldr (flip f)
 
 
 -- Exercise 4 [Finding primes] --
@@ -67,5 +67,5 @@ sieveSundarm n = map ((+1) . (*2)) $ [1..n] \\
                                        i<=j, (i+j + 2*i*j)<=n]
 
 sieveSundarm' n = map ((+1) . (*2)) $ [1..n] \\ (filter (<=n) .
-               map (\(i, j) -> i+j + 2*i*j) . filter (\(i, j) -> i<=j)
+               map (\(i, j) -> i+j + 2*i*j) . filter (uncurry (<=))
                $ cartProd [1..n] [1..n])

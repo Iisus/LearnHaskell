@@ -34,7 +34,7 @@ import Data.List
 -- | -> map (snd) result -> ["abcd", "bd", "c", "d"]
 skips :: [a] -> [[a]]
 skips xs = map (\ x ->
-               map (snd) (filter (\ x' -> fst x' `mod` x == 0) (zip [1..] xs)))
+               map snd (filter (\ x' -> fst x' `mod` x == 0) (zip [1..] xs)))
                [1..length xs]
 
 -- | @localMaxima xs@ takes the list @xs@ and returns a list where each element
