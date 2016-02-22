@@ -10,6 +10,7 @@
 
 module HigherOrder where
 
+import Data.List
 
 -- Exercise 1 [Wholemeal programming] --
 -- 1.
@@ -56,4 +57,15 @@ myFoldl :: (a -> b -> a) -> a -> [b] -> a
 myFoldl f base = foldr (\x acc -> f acc x) base
 
 
--- Exercise 4 [Finding promes] --
+-- Exercise 4 [Finding primes] --
+cartProd :: [a] -> [b] -> [(a, b)]
+cartProd xs ys = [(x, y) | x <- xs, y <- ys]
+
+sieveSundarm, sieveSundarm' :: Integer -> [Integer]
+sieveSundarm n = map ((+1) . (*2)) $ [1..n] \\
+               [i+j + 2*i*j | (i, j) <- cartProd [1..n] [1..n],
+                                       i<=j, (i+j + 2*i*j)<=n]
+
+sieveSundarm' n = map ((+1) . (*2)) $ [1..n] \\ (filter (<=n) .
+               map (\(i, j) -> i+j + 2*i*j) . filter (\(i, j) -> i<=j)
+               $ cartProd [1..n] [1..n])
