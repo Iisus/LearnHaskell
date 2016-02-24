@@ -25,3 +25,14 @@ evalStr :: String -> Maybe Integer
 evalStr str = case parseExp Lit Add Mul str of
               Just expr -> Just (eval expr)
               Nothing   -> Nothing
+
+-- Exercise 3 --
+class Expr a where
+  lit :: Integer -> a
+  add :: a -> a -> a
+  mul :: a -> a -> a
+
+instance Expr ExprT where
+  lit = Lit
+  add y = Add
+  mul y = Mul
