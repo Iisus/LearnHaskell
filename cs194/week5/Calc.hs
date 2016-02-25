@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 {-# OPTIONS_GHC -Wall #-}
 
 {- Calc
@@ -12,17 +13,18 @@ module Calc where
 
 import ExprT
 import Parser
+import StackVM
 
 -- Exercise 1 --
 eval :: ExprT -> Integer
-eval (Lit x) = x
-eval (Add le re) = eval le + eval re
-eval (Mul le re) = eval le * eval re
+eval (ExprT.Lit x) = x
+eval (ExprT.Add le re) = eval le + eval re
+eval (ExprT.Mul le re) = eval le * eval re
 
 
 -- Exercise 2 --
 evalStr :: String -> Maybe Integer
-evalStr str = case parseExp Lit Add Mul str of
+evalStr str = case parseExp ExprT.Lit ExprT.Add ExprT.Mul str of
               Just expr -> Just (eval expr)
               Nothing   -> Nothing
 
@@ -34,14 +36,14 @@ class Expr a where
   mul :: a -> a -> a
 
 instance Expr ExprT where
-  lit = Lit
-  add = Add
-  mul = Mul
+  lit = ExprT.Lit
+  add = ExprT.Add
+  mul = ExprT.Mul
 
 
 -- Exercise 4 --
 instance Expr Integer where
-  lit x = x
+  lit = id
   add = (+)
   mul = (*)
 
@@ -70,3 +72,13 @@ testInteger = testExp :: Maybe Integer
 testBool    = testExp :: Maybe Bool
 testMinMax  = testExp :: Maybe MinMax
 testMod7    = testExp :: Maybe Mod7
+
+
+-- Exercise 5 --
+instance Expr Program where
+  lit x = [StackVM.PushI x]
+  add x y = y ++ x ++ [StackVM.Add]
+  mul x y = y ++ x ++ [StackVM.Mul]
+
+compile :: String -> Maybe Program
+compile = parseExp lit add mul
