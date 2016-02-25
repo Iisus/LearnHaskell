@@ -117,6 +117,7 @@ instance Expr (M.Map String Integer -> Maybe Integer) where
   add lf rf m = opMaybe (+) (lf m) (rf m)
   mul lf rf m = opMaybe (*) (lf m) (rf m)
 
+-- tests
 withVars :: [(String, Integer)]
         -> (M.Map String Integer -> Maybe Integer)
         -> Maybe Integer
