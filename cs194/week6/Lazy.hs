@@ -20,5 +20,8 @@ fibs1 :: [Integer]
 fibs1 = map fib [0..]
 
 -- Exercise 2 --
+fib' :: Integer -> Integer -> [Integer]
+fib' a b = a : fib' b (a+b)
+
 fibs2 :: [Integer]
-fibs2 = [0..] --TODO
+fibs2 = fib' 0 1
