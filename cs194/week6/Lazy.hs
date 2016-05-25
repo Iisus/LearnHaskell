@@ -39,7 +39,7 @@ instance Show a => Show (Stream a) where
 streamRepeat :: a -> Stream a
 streamRepeat x = (Cons x (streamRepeat x))
 
-streamMap :: (a -> a) -> Stream a -> Stream a
+streamMap :: (a -> b) -> Stream a -> Stream b
 streamMap f (Cons x xs) = Cons (f x) (streamMap f xs)
 
 streamFromSeed :: (a -> a) -> a -> Stream a
@@ -50,8 +50,9 @@ nats :: Stream Integer
 nats = streamFromSeed (+1) 0
 
 interleaveStreams :: Stream a -> Stream a -> Stream a
-interleaveStreams (Cons x xs1) (Cons _ xs2) = Cons x
-                                            . interleaveStreams xs2 $ xs1
+interleaveStreams (Cons x1 xs1) (Cons x2 xs2) = Cons x1 . Cons x2
+                                              . interleaveStreams xs1 $ xs2
 
+--TODO
 ruler :: Stream Integer
-ruler = nats -- TODO
+ruler = interleaveStreams (streamRepeat 0) (interleaveStreams (streamRepeat 1) (interleaveStreams (streamRepeat 2) (streamRepeat 3)))
