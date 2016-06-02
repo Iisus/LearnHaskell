@@ -50,9 +50,10 @@ nats :: Stream Integer
 nats = streamFromSeed (+1) 0
 
 interleaveStreams :: Stream a -> Stream a -> Stream a
-interleaveStreams (Cons x1 xs1) (Cons x2 xs2) = Cons x1 . Cons x2
-                                              . interleaveStreams xs1 $ xs2
+interleaveStreams (Cons x1 xs1) s2 = Cons x1 (interleaveStreams s2 xs1)
 
---TODO
+ruler' :: Integer -> Stream Integer
+ruler' x = interleaveStreams (streamRepeat x) (ruler' (x+1))
+
 ruler :: Stream Integer
-ruler = interleaveStreams (streamRepeat 0) (interleaveStreams (streamRepeat 1) (interleaveStreams (streamRepeat 2) (streamRepeat 3)))
+ruler = ruler' 0
